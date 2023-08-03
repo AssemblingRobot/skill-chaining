@@ -98,7 +98,11 @@ python -m furniture.env.furniture_sawyer_gen --furniture_name table_lack_0825 --
 mpirun -np 16 python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_0 --num_connects 1 --run_prefix p0
 mpirun -np 16 python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_1 --num_connects 1 --preassembled 0 --run_prefix p1 --load_init_states log/table_lack_0825.gail.p0.123/success_00099123200.pkl --max_global_step 100000000  --evaluate_interval 200 --ckpt_interval 200 --wandb True --wandb_entity aimrl --wandb_project ikea --gpu 0 
 mpirun -np 16 python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_2 --num_connects 1 --preassembled 0,1 --run_prefix p2 --load_init_states log/table_lack_0825.gail.p1.123/success_00058998784.pkl --wandb True --wandb_entity aimrl --wandb_project ikea
-mpirun -np 16 python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_3 --num_connects 1 --preassembled 0,1,2 --run_prefix p3 --load_init_states log/table_lack_0825.gail.p2.123/success_00027852800.pkl
+
+(BK 300tr) mpirun -np 16 python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_3 --num_connects 1 --preassembled 0,1,2 --run_prefix p3 --load_init_states log/table_lack_0825.gail.p2.123/success_00062275584.pkl --max_global_step 100000000  --wandb True --wandb_entity aimrl --wandb_project ikea
+
+mpirun -np 16 python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_3 --num_connects 1 --preassembled 0,1,2 --run_prefix p3 --load_init_states log/table_lack_0825.gail.p2.123/success_00060637184.pkl --max_global_step 100000000  --wandb True --wandb_entity aimrl --wandb_project ikea
+
 ```
 
 3. Collect successful terminal states from sub-task policies
@@ -106,8 +110,15 @@ Find the best performing checkpoint from WandB, and replace checkpoint path with
 ```
 python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_0 --num_connects 1 --run_prefix p0 --is_train False --num_eval 200 --record_video False --init_ckpt_path log/table_lack_0825.gail.p0.123/ckpt_00099123200.pt
 python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_1 --num_connects 1 --preassembled 0 --run_prefix p1 --is_train False --num_eval 200 --record_video True --init_ckpt_path log/table_lack_0825.gail.p1.123/ckpt_00058998784.pt --load_init_states log/table_lack_0825.gail.p0.123/success_00099123200.pkl
-python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_2 --num_connects 1 --preassembled 0,1 --run_prefix p2 --is_train False --num_eval 200 --record_video False --init_ckpt_path log/table_lack_0825.gail.p2.123/ckpt_00098320384.pt
-python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_3 --num_connects 1 --preassembled 0,1,2 --run_prefix p3 --is_train False --num_eval 200 --record_video False --init_ckpt_path log/table_lack_0825.gail.p3.123/ckpt_00000000000.pt
+
+(BK 300Tr) python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_2 --num_connects 1 --preassembled 0,1 --run_prefix p2 --is_train False --num_eval 200 --record_video False --init_ckpt_path log/table_lack_0825.gail.p2.123/ckpt_00062275584.pt --load_init_states log/table_lack_0825.gail.p1.123/success_00058998784.pkl
+
+python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_2 --num_connects 1 --preassembled 0,1 --run_prefix p2 --is_train False --num_eval 200 --record_video False --init_ckpt_path log/table_lack_0825.gail.p2.123/ckpt_00060637184.pt --load_init_states log/table_lack_0825.gail.p1.123/success_00058998784.pkl
+
+
+python -m run --algo gail --furniture_name table_lack_0825 --demo_path demos/table_lack/Sawyer_table_lack_0825_3 --num_connects 1 --preassembled 0,1,2 --run_prefix p3 --is_train False --num_eval 200 --record_video False --init_ckpt_path log/table_lack_0825.gail.p3.123/ckpt_00045072384.pt --load_init_states log/table_lack_0825.gail.p2.123/success_00060637184.pkl 
+
+
 ```
 
 4. Train skill chaining
@@ -115,8 +126,8 @@ Use the best performing checkpoints (`--ps_ckpt`) and their successful terminal 
 ```
 # Ours
 mpirun -np 16 python -m run --algo ps --furniture_name table_lack_0825 --num_connects 4 --run_prefix ours \
---ps_ckpts log/table_lack_0825.gail.p0.123/ckpt_00021299200.pt,log/table_lack_0825.gail.p1.123/ckpt_00021299200.pt,log/table_lack_0825.gail.p2.123/ckpt_00021299200.pt,log/table_lack_0825.gail.p3.123/ckpt_00021299200.pt \
---ps_load_init_states log/table_lack_0825.gail.p0.123/success_00021299200.pkl,log/table_lack_0825.gail.p1.123/success_00021299200.pkl,log/table_lack_0825.gail.p2.123/success_00021299200.pkl,log/table_lack_0825.gail.p3.123/success_00021299200.pkl \
+--ps_ckpts log/table_lack_0825.gail.p0.123/ckpt_00099123200.pt,log/table_lack_0825.gail.p1.123/ckpt_00058998784.pt,log/table_lack_0825.gail.p2.123/ckpt_00060637184.pt,log/table_lack_0825.gail.p3.123/ckpt_00045072384.pt \
+--ps_load_init_states log/table_lack_0825.gail.p0.123/success_00099123200.pkl,log/table_lack_0825.gail.p1.123/success_00058998784.pkl,log/table_lack_0825.gail.p2.123/success_00060637184.pkl,log/table_lack_0825.gail.p3.123/success_00045072384.pkl \
 --ps_demo_paths demos/table_lack/Sawyer_table_lack_0825_0,demos/table_lack/Sawyer_table_lack_0825_1,demos/table_lack/Sawyer_table_lack_0825_2,demos/table_lack/Sawyer_table_lack_0825_3
 
 # Policy Sequencing (Clegg et al. 2018)
