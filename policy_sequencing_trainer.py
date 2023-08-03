@@ -135,7 +135,7 @@ class PolicySequencingTrainer(Trainer):
                             self._log_test(step, info)
                             logger.warn("Garbage collection: %s", str(gc.get_count()))
 
-                        if update_iter % config.ckpt_interval == 0:
+                        if update_iter % config.ckpt_interval == 1:
                             self._save_ckpt(
                                 step, {"ps_epoch": ps_epoch, "update_iter": update_iter}
                             )
